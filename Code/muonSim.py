@@ -41,12 +41,16 @@ def lamdecay(p):
 def genMuon():
     r = random.random()
     t = -1 * lam * math.log(r, e)  # penetration depth
-    h = -1 * H * math.log(t / (rho0 * H), e)
+    height = -1 * H * math.log(t / (rho0 * H), e)
 
-    if h < 0:
+    if height < 0:
         return
 
+    for i in range(1000000 - 1, int(height), -deltah):
+        nCrossing[i // deltah] += 1
+
     for i in range(pionMult):
+        h = height
         ppi = ps.genPionSpectrum() * pion_factor
         pmu = 0.787 * ppi
         decay = False
