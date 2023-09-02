@@ -5,7 +5,7 @@ from concurrent.futures import ThreadPoolExecutor
 import csv
 
 nCrossing = []
-e = 2.7182818284590452353602874713527
+e = math.e
 # λ = 1200 kg/m2
 lam_factor = 1
 lam = 1200 * lam_factor
@@ -25,6 +25,9 @@ c = 299792458
 tau = 2.2e-6
 pion_factor = 0.5
 
+# number of pions produced by each proton
+pionMult = 10
+
 
 # calculate density of air at height h
 def rhoair(h):
@@ -39,20 +42,28 @@ def genMuon():
     r = random.random()
     t = -1 * lam * math.log(r, e)  # penetration depth
     h = -1 * H * math.log(t / (rho0 * H), e)
-    ppi = ps.genPionSpectrum() * pion_factor
-    pmu = 0.787 * ppi
-    decay = False
-    while not decay:
-        deltaE = dEdx0 * rhoair(h) * deltah
-        pmu -= deltaE
 
-        Pdecay = 1 - e ** (-1 * deltah / lamdecay(pmu))
-        i = int(h // deltah)
-        if pmu > 0 and r > Pdecay:
-            nCrossing[i] += 1
-        else:
-            decay = True
-        h -= deltah
+    if h < 0:
+        return
+
+    for i in range(pionMult):
+        ppi = ps.genPionSpectrum() * pion_factor
+        pmu = 0.787 * ppi
+        decay = False
+        while not decay:
+            deltaE = dEdx0 * rhoair(h) * deltah
+            pmu -= deltaE
+
+            Pdecay = 1 - e ** (-1 * deltah / lamdecay(pmu))
+            i = int(h // deltah)
+
+            r = random.random()
+
+            if pmu > 0 and r > Pdecay:
+                nCrossing[i] += 1
+            else:
+                decay = True
+            h -= deltah
 
 
 for i in range(0, 1000000, deltah):
@@ -63,7 +74,6 @@ with ThreadPoolExecutor() as executor:
         executor.submit(genMuon)
         if i % 10000 == 0:
             print(i // 10000, "%")
-
 
 with open("Simulation Result.csv", "w", newline="") as output_file:
     writer = csv.writer(output_file)
