@@ -7,7 +7,7 @@ import csv
 nCrossing = []
 e = math.e
 # λ = 1200 kg/m2
-lam_factor = 1.1
+lam_factor = 1
 lam = 1200 * lam_factor
 # ρ0 = 1.23 kg/m3
 rho0 = 1.23
@@ -23,7 +23,7 @@ m = 0.107
 c = 299792458
 # τ = 2.2e-6 s
 tau = 2.2e-6
-pion_factor = 0.5
+pion_factor = 0.52
 
 # number of pions produced by each proton
 pionMult = 10
@@ -46,7 +46,7 @@ def genMuon():
     if height < 0:
         return
 
-    for i in range(1000000 - 1, int(height), -deltah):
+    for i in range(28200, int(height), -deltah):
         nCrossing[i // deltah] += 1
 
     for i in range(pionMult):
@@ -59,22 +59,20 @@ def genMuon():
             pmu -= deltaE
 
             Pdecay = 1 - e ** (-1 * deltah / lamdecay(pmu))
-            i = int(h // deltah)
-
             r = random.random()
-
             if pmu > 0 and r > Pdecay:
-                nCrossing[i] += 1
+                if h <= 28200:
+                    nCrossing[int(h // deltah)] += 1
             else:
                 decay = True
             h -= deltah
 
 
-for i in range(0, 1000000, deltah):
+for i in range(0, 28200, deltah):
     nCrossing.append(0)
 
 with ThreadPoolExecutor() as executor:
-    for i in range(1, 100001):
+    for i in range(1, 1000001):
         executor.submit(genMuon)
         if i % 10000 == 0:
             print(i // 10000, "%")
@@ -83,6 +81,6 @@ with open("Simulation Result.csv", "w", newline="") as output_file:
     writer = csv.writer(output_file)
     writer.writerow(["altitude", "count"])
     # for i in range(0, 1000000, deltah):
-    for i in range(0, 28000, deltah):
+    for i in range(0, 28200, deltah):
         if nCrossing[i // deltah] != 0:
             writer.writerow([i, nCrossing[i // deltah]])
