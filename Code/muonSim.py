@@ -54,21 +54,20 @@ def genMuon():
         ppi = ps.genPionSpectrum() * pion_factor
         pmu = 0.787 * ppi
         decay = False
-        while not decay:
+        while (not decay) and (h >= 0):
             deltaE = dEdx0 * rhoair(h) * deltah
             pmu -= deltaE
-
             Pdecay = 1 - e ** (-1 * deltah / lamdecay(pmu))
             r = random.random()
             if pmu > 0 and r > Pdecay:
                 if h <= 28200:
-                    nCrossing[int(h // deltah)] += 1
+                    i = int(h // deltah)
+                    nCrossing[i] += 1
             else:
                 decay = True
             h -= deltah
-
-
-for i in range(0, 28200, deltah):
+            
+for i in range(0, 28201, deltah):
     nCrossing.append(0)
 
 with ThreadPoolExecutor() as executor:
