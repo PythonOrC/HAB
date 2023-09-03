@@ -7,7 +7,7 @@ import csv
 nCrossing = []
 e = math.e
 # λ = 1200 kg/m2
-lam_factor = 1
+lam_factor = 1.1
 lam = 1200 * lam_factor
 # ρ0 = 1.23 kg/m3
 rho0 = 1.23
@@ -74,7 +74,7 @@ for i in range(0, 1000000, deltah):
     nCrossing.append(0)
 
 with ThreadPoolExecutor() as executor:
-    for i in range(1, 1000001):
+    for i in range(1, 100001):
         executor.submit(genMuon)
         if i % 10000 == 0:
             print(i // 10000, "%")
@@ -82,6 +82,7 @@ with ThreadPoolExecutor() as executor:
 with open("Simulation Result.csv", "w", newline="") as output_file:
     writer = csv.writer(output_file)
     writer.writerow(["altitude", "count"])
-    for i in range(0, 1000000, deltah):
+    # for i in range(0, 1000000, deltah):
+    for i in range(0, 28000, deltah):
         if nCrossing[i // deltah] != 0:
             writer.writerow([i, nCrossing[i // deltah]])
