@@ -23,11 +23,12 @@ m = 0.107
 c = 299792458
 # τ = 2.2e-6 s
 tau = 2.2e-6
-pion_factor = 0.52
+pion_factor = 0.1
 
 # number of pions produced by each proton
-pionMult = 10
+pionMult = 30
 
+event_reduce = 8
 
 # calculate density of air at height h
 def rhoair(h):
@@ -66,20 +67,20 @@ def genMuon():
             else:
                 decay = True
             h -= deltah
-            
+
+
 for i in range(0, 28201, deltah):
     nCrossing.append(0)
 
 with ThreadPoolExecutor() as executor:
-    for i in range(1, 1000001):
+    for i in range(1, 1000001 // event_reduce):
         executor.submit(genMuon)
-        if i % 10000 == 0:
-            print(i // 10000, "%")
+        if i % (10000//event_reduce) == 0:
+            print(i // (10000 // event_reduce), "%")
 
 with open("Simulation Result.csv", "w", newline="") as output_file:
     writer = csv.writer(output_file)
     writer.writerow(["altitude", "count"])
-    # for i in range(0, 1000000, deltah):
     for i in range(0, 28200, deltah):
         if nCrossing[i // deltah] != 0:
             writer.writerow([i, nCrossing[i // deltah]])
