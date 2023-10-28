@@ -7,8 +7,8 @@ import csv
 nCrossing = []
 e = math.e
 # λ = 1200 kg/m2
-lam_factor = 1
-lam = 1200 * lam_factor
+lam_factor = 1200
+lam = 1200 * 800/lam_factor
 # ρ0 = 1.23 kg/m3
 rho0 = 1.23
 # H = 7570 m
@@ -23,7 +23,7 @@ m = 0.107
 c = 299792458
 # τ = 2.2e-6 s
 tau = 2.2e-6
-pion_factor = 0.1
+pion_factor = 0.25
 
 # number of pions produced by each proton
 pionMult = 30

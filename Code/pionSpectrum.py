@@ -8,8 +8,8 @@ def pionSpectrum(p) :
     else : A, gamma = 0.193, 2.65
     return A/p**(gamma)
 
-def genPionSpectrum() :
-    pMin = 0.3 
+def genPionSpectrum(pMin = 0.3 ) :
+    
     maxY = pionSpectrum(pMin)
     nTrials = 0 
     while True :
